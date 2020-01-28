@@ -14,28 +14,18 @@ import {
   CLASS_HIDDEN,
 } from './constants';
 import {
-  forEach,
-  getMaxZoomRatio,
-  getOffset,
-  removeClass,
+  forEach, getMaxZoomRatio, getOffset, removeClass,
 } from './utilities';
 
 export default {
   change(event) {
     const {
-      options,
-      canvasData,
-      containerData,
-      cropBoxData,
-      pointers,
+      options, canvasData, containerData, cropBoxData, pointers,
     } = this;
     let { action } = this;
     let { aspectRatio } = options;
     let {
-      left,
-      top,
-      width,
-      height,
+      left, top, width, height,
     } = cropBoxData;
     const right = left + width;
     const bottom = top + height;
@@ -51,18 +41,23 @@ export default {
       aspectRatio = width && height ? width / height : 1;
     }
 
+    const transformScale = window.transformScale || 1;
+    console.log(`scale ${transformScale}`);
+
     if (this.limited) {
       ({ minLeft, minTop } = cropBoxData);
-      maxWidth = minLeft + Math.min(
-        containerData.width,
-        canvasData.width,
-        canvasData.left + canvasData.width,
-      );
-      maxHeight = minTop + Math.min(
-        containerData.height,
-        canvasData.height,
-        canvasData.top + canvasData.height,
-      );
+      maxWidth = minLeft
+        + Math.min(
+          containerData.width,
+          canvasData.width,
+          canvasData.left + canvasData.width,
+        );
+      maxHeight = minTop
+        + Math.min(
+          containerData.height,
+          canvasData.height,
+          canvasData.top + canvasData.height,
+        );
     }
 
     const pointer = pointers[Object.keys(pointers)[0]];
@@ -113,8 +108,11 @@ export default {
 
       // Resize crop box
       case ACTION_EAST:
-        if (range.x >= 0 && (right >= maxWidth || (aspectRatio
-          && (top <= minTop || bottom >= maxHeight)))) {
+        if (
+          range.x >= 0
+          && (right >= maxWidth
+            || (aspectRatio && (top <= minTop || bottom >= maxHeight)))
+        ) {
           renderable = false;
           break;
         }
@@ -136,15 +134,18 @@ export default {
         break;
 
       case ACTION_NORTH:
-        if (range.y <= 0 && (top <= minTop || (aspectRatio
-          && (left <= minLeft || right >= maxWidth)))) {
+        if (
+          range.y <= 0
+          && (top <= minTop
+            || (aspectRatio && (left <= minLeft || right >= maxWidth)))
+        ) {
           renderable = false;
           break;
         }
 
         check(ACTION_NORTH);
-        height -= range.y;
-        top += range.y;
+        height -= range.y / transformScale;
+        top += range.y / transformScale;
 
         if (height < 0) {
           action = ACTION_SOUTH;
@@ -160,15 +161,18 @@ export default {
         break;
 
       case ACTION_WEST:
-        if (range.x <= 0 && (left <= minLeft || (aspectRatio
-          && (top <= minTop || bottom >= maxHeight)))) {
+        if (
+          range.x <= 0
+          && (left <= minLeft
+            || (aspectRatio && (top <= minTop || bottom >= maxHeight)))
+        ) {
           renderable = false;
           break;
         }
 
         check(ACTION_WEST);
-        width -= range.x;
-        left += range.x;
+        width -= range.x / transformScale;
+        left += range.x / transformScale;
 
         if (width < 0) {
           action = ACTION_EAST;
@@ -184,14 +188,17 @@ export default {
         break;
 
       case ACTION_SOUTH:
-        if (range.y >= 0 && (bottom >= maxHeight || (aspectRatio
-          && (left <= minLeft || right >= maxWidth)))) {
+        if (
+          range.y >= 0
+          && (bottom >= maxHeight
+            || (aspectRatio && (left <= minLeft || right >= maxWidth)))
+        ) {
           renderable = false;
           break;
         }
 
         check(ACTION_SOUTH);
-        height += range.y;
+        height += range.y / transformScale;
 
         if (height < 0) {
           action = ACTION_NORTH;
@@ -214,8 +221,8 @@ export default {
           }
 
           check(ACTION_NORTH);
-          height -= range.y;
-          top += range.y;
+          height -= range.y / transformScale;
+          top += range.y / transformScale;
           width = height * aspectRatio;
         } else {
           check(ACTION_NORTH);
@@ -223,22 +230,22 @@ export default {
 
           if (range.x >= 0) {
             if (right < maxWidth) {
-              width += range.x;
+              width += range.x / transformScale;
             } else if (range.y <= 0 && top <= minTop) {
               renderable = false;
             }
           } else {
-            width += range.x;
+            width += range.x / transformScale;
           }
 
           if (range.y <= 0) {
             if (top > minTop) {
-              height -= range.y;
-              top += range.y;
+              height -= range.y / transformScale;
+              top += range.y / transformScale;
             }
           } else {
-            height -= range.y;
-            top += range.y;
+            height -= range.y / transformScale;
+            top += range.y / transformScale;
           }
         }
 
@@ -268,8 +275,8 @@ export default {
           }
 
           check(ACTION_NORTH);
-          height -= range.y;
-          top += range.y;
+          height -= range.y / transformScale;
+          top += range.y / transformScale;
           width = height * aspectRatio;
           left += cropBoxData.width - width;
         } else {
@@ -278,24 +285,24 @@ export default {
 
           if (range.x <= 0) {
             if (left > minLeft) {
-              width -= range.x;
-              left += range.x;
+              width -= range.x / transformScale;
+              left += range.x / transformScale;
             } else if (range.y <= 0 && top <= minTop) {
               renderable = false;
             }
           } else {
-            width -= range.x;
-            left += range.x;
+            width -= range.x / transformScale;
+            left += range.x / transformScale;
           }
 
           if (range.y <= 0) {
             if (top > minTop) {
-              height -= range.y;
-              top += range.y;
+              height -= range.y / transformScale;
+              top += range.y / transformScale;
             }
           } else {
-            height -= range.y;
-            top += range.y;
+            height -= range.y / transformScale;
+            top += range.y / transformScale;
           }
         }
 
@@ -325,8 +332,8 @@ export default {
           }
 
           check(ACTION_WEST);
-          width -= range.x;
-          left += range.x;
+          width -= range.x / transformScale;
+          left += range.x / transformScale;
           height = width / aspectRatio;
         } else {
           check(ACTION_SOUTH);
@@ -334,22 +341,22 @@ export default {
 
           if (range.x <= 0) {
             if (left > minLeft) {
-              width -= range.x;
-              left += range.x;
+              width -= range.x / transformScale;
+              left += range.x / transformScale;
             } else if (range.y >= 0 && bottom >= maxHeight) {
               renderable = false;
             }
           } else {
-            width -= range.x;
-            left += range.x;
+            width -= range.x / transformScale;
+            left += range.x / transformScale;
           }
 
           if (range.y >= 0) {
             if (bottom < maxHeight) {
-              height += range.y;
+              height += range.y / transformScale;
             }
           } else {
-            height += range.y;
+            height += range.y / transformScale;
           }
         }
 
@@ -379,7 +386,7 @@ export default {
           }
 
           check(ACTION_EAST);
-          width += range.x;
+          width += range.x / transformScale;
           height = width / aspectRatio;
         } else {
           check(ACTION_SOUTH);
@@ -387,20 +394,20 @@ export default {
 
           if (range.x >= 0) {
             if (right < maxWidth) {
-              width += range.x;
+              width += range.x / transformScale;
             } else if (range.y >= 0 && bottom >= maxHeight) {
               renderable = false;
             }
           } else {
-            width += range.x;
+            width += range.x / transformScale;
           }
 
           if (range.y >= 0) {
             if (bottom < maxHeight) {
-              height += range.y;
+              height += range.y / transformScale;
             }
           } else {
-            height += range.y;
+            height += range.y / transformScale;
           }
         }
 

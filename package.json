@@ -1,5 +1,5 @@
 {
-  "name": "cropperjs",
+  "name": "@aha-app/cropperjs",
   "description": "JavaScript image cropper.",
   "version": "1.5.6",
   "main": "dist/cropper.common.js",
@@ -106,15 +106,9 @@
     "> 1%",
     "not ie <= 8"
   ],
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
