@@ -1,11 +1,11 @@
 /*!
- * AhaAppCropper.js v1.5.6
+ * AhaAppCropper.js v1.5.8
  * https://fengyuanchen.github.io/cropperjs
  *
  * Copyright 2015-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2020-01-28T19:57:31.558Z
+ * Date: 2020-02-27T23:04:54.694Z
  */
 
 'use strict';
@@ -2002,8 +2002,9 @@ var change = {
       aspectRatio = width && height ? width / height : 1;
     }
 
+    var _options$theta = options.theta,
+        theta = _options$theta === void 0 ? 0 : _options$theta;
     var transformScale = window.transformScale || 1;
-    console.log("scale " + transformScale);
 
     if (this.limited) {
       minLeft = cropBoxData.minLeft;
@@ -2013,10 +2014,31 @@ var change = {
     }
 
     var pointer = pointers[Object.keys(pointers)[0]];
-    var range = {
-      x: pointer.endX - pointer.startX,
-      y: pointer.endY - pointer.startY
-    };
+    var range;
+    var trueTheta = theta < 0 ? 360 + theta : theta;
+    var direction = Math.trunc(Math.trunc(trueTheta) / 90) % 4;
+
+    if (direction === 0) {
+      range = {
+        x: pointer.endX - pointer.startX,
+        y: pointer.endY - pointer.startY
+      };
+    } else if (direction === 1) {
+      range = {
+        y: pointer.startX - pointer.endX,
+        x: pointer.endY - pointer.startY
+      };
+    } else if (direction === 2) {
+      range = {
+        x: pointer.startX - pointer.endX,
+        y: pointer.startY - pointer.endY
+      };
+    } else if (direction === 3) {
+      range = {
+        y: pointer.endX - pointer.startX,
+        x: pointer.startY - pointer.endY
+      };
+    }
 
     var check = function check(side) {
       switch (side) {
@@ -2053,8 +2075,8 @@ var change = {
     switch (action) {
       // Move crop box
       case ACTION_ALL:
-        left += range.x;
-        top += range.y;
+        left += range.x / transformScale;
+        top += range.y / transformScale;
         break;
       // Resize crop box
 
@@ -2065,7 +2087,7 @@ var change = {
         }
 
         check(ACTION_EAST);
-        width += range.x;
+        width += range.x / transformScale;
 
         if (width < 0) {
           action = ACTION_WEST;
@@ -2384,8 +2406,8 @@ var change = {
         }
 
         offset = getOffset(this.cropper);
-        left = pointer.startX - offset.left;
-        top = pointer.startY - offset.top;
+        left = (pointer.startX - offset.left) / transformScale;
+        top = (pointer.startY - offset.top) / transformScale;
         width = cropBoxData.minWidth;
         height = cropBoxData.minHeight;
 
@@ -3605,4 +3627,3 @@ function () {
 assign(Cropper.prototype, render, preview, events, handlers, change, methods);
 
 module.exports = Cropper;
-//# sourceMappingURL=cropper.common.js.map

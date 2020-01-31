@@ -1,10 +1,10 @@
 {
   "name": "@aha-app/cropperjs",
   "description": "JavaScript image cropper.",
-  "version": "1.5.6",
-  "main": "dist/cropper.common.js",
-  "module": "dist/cropper.esm.js",
-  "browser": "dist/cropper.js",
+  "version": "1.5.8",
+  "main": "dist/@aha-app/cropper.common.js",
+  "module": "dist/@aha-app/cropper.esm.js",
+  "browser": "dist/@aha-app/cropper.js",
   "types": "types/index.d.ts",
   "style": "dist/cropper.css",
   "files": [
@@ -20,7 +20,7 @@
     "codecov": "cat coverage/lcov.info | codecov",
     "compress": "npm run compress:css && npm run compress:js",
     "compress:css": "postcss dist/cropper.css -u cssnano -o dist/cropper.min.css --no-map",
-    "compress:js": "uglifyjs dist/cropper.js -o dist/cropper.min.js -c -m --comments /^!/",
+    "compress:js": "uglifyjs dist/@aha-app/cropper.js -o dist/@aha-app/cropper.min.js -c -m --comments /^!/",
     "copy": "cpy dist/cropper.css docs/css",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "stylelint {src,docs,examples}/**/*.{css,scss,html} --fix",

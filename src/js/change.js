@@ -41,8 +41,9 @@ export default {
       aspectRatio = width && height ? width / height : 1;
     }
 
+    const { theta = 0 } = options;
+
     const transformScale = window.transformScale || 1;
-    console.log(`scale ${transformScale}`);
 
     if (this.limited) {
       ({ minLeft, minTop } = cropBoxData);
@@ -61,10 +62,33 @@ export default {
     }
 
     const pointer = pointers[Object.keys(pointers)[0]];
-    const range = {
-      x: pointer.endX - pointer.startX,
-      y: pointer.endY - pointer.startY,
-    };
+    let range;
+
+    const trueTheta = theta < 0 ? 360 + theta : theta;
+
+    const direction = Math.trunc(Math.trunc(trueTheta) / 90) % 4;
+    if (direction === 0) {
+      range = {
+        x: pointer.endX - pointer.startX,
+        y: pointer.endY - pointer.startY,
+      };
+    } else if (direction === 1) {
+      range = {
+        y: pointer.startX - pointer.endX,
+        x: pointer.endY - pointer.startY,
+      };
+    } else if (direction === 2) {
+      range = {
+        x: pointer.startX - pointer.endX,
+        y: pointer.startY - pointer.endY,
+      };
+    } else if (direction === 3) {
+      range = {
+        y: pointer.endX - pointer.startX,
+        x: pointer.startY - pointer.endY,
+      };
+    }
+
     const check = (side) => {
       switch (side) {
         case ACTION_EAST:
@@ -102,8 +126,8 @@ export default {
     switch (action) {
       // Move crop box
       case ACTION_ALL:
-        left += range.x;
-        top += range.y;
+        left += range.x / transformScale;
+        top += range.y / transformScale;
         break;
 
       // Resize crop box
@@ -118,7 +142,7 @@ export default {
         }
 
         check(ACTION_EAST);
-        width += range.x;
+        width += range.x / transformScale;
 
         if (width < 0) {
           action = ACTION_WEST;
@@ -449,8 +473,8 @@ export default {
         }
 
         offset = getOffset(this.cropper);
-        left = pointer.startX - offset.left;
-        top = pointer.startY - offset.top;
+        left = (pointer.startX - offset.left) / transformScale;
+        top = (pointer.startY - offset.top) / transformScale;
         width = cropBoxData.minWidth;
         height = cropBoxData.minHeight;
 
