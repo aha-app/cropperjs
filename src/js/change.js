@@ -41,9 +41,7 @@ export default {
       aspectRatio = width && height ? width / height : 1;
     }
 
-    const { theta = 0 } = options;
-
-    const transformScale = window.transformScale || 1;
+    const { theta = 0, transformScale = 1 } = options;
 
     if (this.limited) {
       ({ minLeft, minTop } = cropBoxData);

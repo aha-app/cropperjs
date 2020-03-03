@@ -5,7 +5,7 @@
  * Copyright 2015-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2020-02-27T23:04:54.694Z
+ * Date: 2020-03-02T19:56:44.095Z
  */
 
 'use strict';
@@ -2003,8 +2003,9 @@ var change = {
     }
 
     var _options$theta = options.theta,
-        theta = _options$theta === void 0 ? 0 : _options$theta;
-    var transformScale = window.transformScale || 1;
+        theta = _options$theta === void 0 ? 0 : _options$theta,
+        _options$transformSca = options.transformScale,
+        transformScale = _options$transformSca === void 0 ? 1 : _options$transformSca;
 
     if (this.limited) {
       minLeft = cropBoxData.minLeft;
@@ -3627,3 +3628,4 @@ function () {
 assign(Cropper.prototype, render, preview, events, handlers, change, methods);
 
 module.exports = Cropper;
+//# sourceMappingURL=cropper.common.js.map
